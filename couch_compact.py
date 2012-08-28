@@ -3,7 +3,6 @@ import urllib2
 import datetime
 from optparse import OptionParser
 
-
 def save_url(url, file_handle, size=4096):
     req = urllib2.urlopen(url)
 
@@ -25,7 +24,6 @@ def views(url):
     designs_request = urllib2.urlopen(views_URL)
     designs = json.load(designs_request)
     return [x['id'].split("/")[1] for x in designs['rows']]
-
 
 parser = OptionParser()
 parser.add_option("--couch-server", dest="server", default="192.168.33.11", help="Couch Database Server Hostname/IP")
