@@ -1,30 +1,34 @@
 #!/usr/bin/env python
-import json
-import urllib2
+# http://docs.python-requests.org/en/latest/user/quickstart/
+import requests
 import datetime
 from optparse import OptionParser
 
 
-def save_url(url, file_handle, size=4096):
-    req = urllib2.urlopen(url)
+def save_url(url, file_handle, size=(8 * 1024)):
+    req = requests.get(url)
 
     while True:
-        chunk = req.read(size)
+        chunk = req.raw.read(size)
         if chunk:
             file_handle.write(chunk)
         else:
             break
 
 
+def put(url):
+    req = requests.put(url)
+    return req.json
+
+
 def post(url, content=""):
-    reqObj = urllib2.Request(url, data=content, headers={'Content-type': 'application/json'})
-    req = urllib2.urlopen(reqObj)
-    return json.load(req)
+    req = requests.post(url, data=content, headers={'content-type': 'application/json'})
+    return req.json
 
 
 def views(url):
-    designs_request = urllib2.urlopen(views_URL)
-    designs = json.load(designs_request)
+    req = requests.get(views_URL)
+    designs = req.json
     return [x['id'].split("/")[1] for x in designs['rows']]
 
 parser = OptionParser()
