@@ -1,7 +1,9 @@
+#!/usr/bin/env python
 import json
 import urllib2
 import datetime
 from optparse import OptionParser
+
 
 def save_url(url, file_handle, size=4096):
     req = urllib2.urlopen(url)
