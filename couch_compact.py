@@ -6,8 +6,14 @@ from optparse import OptionParser
 
 
 def save_url(url, file_handle, size=(8 * 1024)):
-    req = requests.get(url)
-    file_handle.write(req.content)
+    req = requests.get(url, prefetch=False)
+
+    while True:
+        chunk = req.raw.read(size)
+        if chunk:
+            file_handle.write(chunk)
+        else:
+            break
 
 
 def put(url):
