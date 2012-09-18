@@ -48,6 +48,10 @@ parser.add_option("--restore", dest="restore_file", default=None, help="Restore 
 
 if options.restore_file:
     with open(options.restore_file) as handle:
+        # need to modify the first line from:
+        #   "total_rows":4879,"offset":0,"rows":
+        # to:
+        #   "docs":
         print "restore", post("http://%s:%s/%s/_bulk_docs" % (options.server, options.port, options.database), handle.read())
 
 if options.compact_views or options.all:
