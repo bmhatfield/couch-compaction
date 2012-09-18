@@ -15,6 +15,8 @@ def save_url(url, file_handle, size=(8 * 1024)):
         else:
             break
 
+    return req.status_code
+
 
 def put(url):
     req = requests.put(url)
@@ -65,4 +67,4 @@ if options.compact_database or options.all:
 if options.backup or options.all:
     d = datetime.datetime.now()
     with open('backup-%s-%s.bak' % (options.database, d.strftime("%Y-%m-%d_%H.%M.%S")), 'w') as handle:
-        save_url("http://%s:%s/%s/_all_docs?include_docs=true" % (options.server, options.port, options.database), handle)
+        print "backup", save_url("http://%s:%s/%s/_all_docs?include_docs=true" % (options.server, options.port, options.database), handle)
