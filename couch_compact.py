@@ -2,6 +2,7 @@
 # http://docs.python-requests.org/en/latest/user/quickstart/
 import requests
 import datetime
+import gzip
 from optparse import OptionParser
 
 
@@ -42,12 +43,15 @@ parser.add_option("--all", dest="all", action='store_true', default=False, help=
 parser.add_option("--compact-views", dest="compact_views", action='store_true', default=False, help="Compact each view")
 parser.add_option("--cleanup-views", dest="cleanup_views", action='store_true', default=False, help="Clean up previously-compacted view files")
 parser.add_option("--compact-database", dest="compact_database", action='store_true', default=False, help="Compact database")
+
 parser.add_option("--backup", dest="backup", action='store_true', default=False, help="Export database backup")
 parser.add_option("--restore", dest="restore_file", default=None, help="Restore database from file")
+
+parser.add_option("--s3-bucket", dest="s3_bucket", default=None, help="Save Backup to S3 Bucket specified")
 (options, args) = parser.parse_args()
 
 if options.restore_file:
-    with open(options.restore_file) as handle:
+    with gzip.open(options.restore_file) as handle:
         # need to modify the first line from:
         #   "total_rows":4879,"offset":0,"rows":
         # to:
@@ -68,7 +72,18 @@ if options.compact_database or options.all:
     # Run a compaction against the whole database.
     print "compact", post("http://%s:%s/%s/_compact" % (options.server, options.port, options.database))
 
-if options.backup or options.all:
+if options.backup:
     d = datetime.datetime.now()
-    with open('backup-%s-%s.bak' % (options.database, d.strftime("%Y-%m-%d_%H.%M.%S")), 'w') as handle:
+    with gzip.open('backup-%s-%s.bak.gz' % (options.database, d.strftime("%Y-%m-%d_%H.%M.%S")), 'w') as handle:
         print "backup", save_url("http://%s:%s/%s/_all_docs?include_docs=true" % (options.server, options.port, options.database), handle)
+
+        if options.s3_bucket:
+            try:
+                from boto.s3.connection import S3Connection
+                from boto.s3.bucket import Bucket
+            except:
+                print "Unable to import boto, s3 upload skipped."
+                exit(1)
+
+            s3 = S3Connection()
+            bucket = Bucket(s3, "couch-testbucket")
