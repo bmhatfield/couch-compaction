@@ -62,15 +62,15 @@ if options.compact_views or options.all:
     # Retrieve all the 'views', and then compact each one.
     views_URL = 'http://%s:%s/%s/_all_docs?startkey="_design/"&endkey="_design0"' % (options.server, options.port, options.database)
     for view in views(views_URL):
-        print view, post("http://%s:%s/%s/_compact/%s" % (options.server, options.port, options.database, view))
+        print "Compacting:", view, post("http://%s:%s/%s/_compact/%s" % (options.server, options.port, options.database, view))
 
 if options.cleanup_views or options.all:
     # Run a 'view cleanup' against all the views that have just been compacted.
-    print "view_cleanup", post("http://%s:%s/%s/_view_cleanup" % (options.server, options.port, options.database))
+    print "Running View Cleanup...", post("http://%s:%s/%s/_view_cleanup" % (options.server, options.port, options.database))
 
 if options.compact_database or options.all:
     # Run a compaction against the whole database.
-    print "compact", post("http://%s:%s/%s/_compact" % (options.server, options.port, options.database))
+    print "Running Overall Compaction...", post("http://%s:%s/%s/_compact" % (options.server, options.port, options.database))
 
 if options.backup:
     d = datetime.datetime.now()
