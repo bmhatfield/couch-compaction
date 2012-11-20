@@ -3,8 +3,15 @@ couch-compaction
 
 A simple script to automatically perform the various CouchDB compaction tasks.
 
-Usage
-=====
+Usage Example
+=============
+
+    python couch_compact.py --couch-server ec2-INSTANCE.compute-1.amazonaws.com --all
+    [wait a few moments]
+    python couch_compact.py --couch-server ec2-INSTANCE.compute-1.amazonaws.com --backup
+
+Full Usage
+==========
 
     [bhatfield@bhatfield-mac couch-compaction]$ python couch_compact.py --help
     Usage: couch_compact.py [options]
