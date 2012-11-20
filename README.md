@@ -22,12 +22,11 @@ Full Usage
                             Couch Database Server Hostname/IP
       --couch-port=PORT     Couch Database Server Port
       --database=DATABASE   Database to work with
-      --all                 Run all compaction and backup steps, except restore
+      --all                 Run all compaction steps (--compact-views, --cleanup-
+                              views, --compact-database)
       --compact-views       Compact each view
       --cleanup-views       Clean up previously-compacted view files
       --compact-database    Compact database
       --backup              Export database backup
       --restore=RESTORE_FILE
                             Restore database from file
-      --s3-bucket=S3_BUCKET
-                            Save Backup to S3 Bucket specified
