@@ -2,6 +2,7 @@
 # http://docs.python-requests.org/en/latest/user/quickstart/
 import requests
 import datetime
+import time
 import gzip
 from optparse import OptionParser
 
@@ -26,7 +27,7 @@ def put(url):
 
 def post(url, content=""):
     req = requests.post(url, data=content, headers={'content-type': 'application/json'})
-    return req.json
+    return req.json["ok"]
 
 
 def views(url):
@@ -70,7 +71,19 @@ if options.cleanup_views or options.all:
 
 if options.compact_database or options.all:
     # Run a compaction against the whole database.
+    tasks_url = 'http://%s:%s/_active_tasks' % (options.server, options.port)
     print "Running Overall Compaction...", post("http://%s:%s/%s/_compact" % (options.server, options.port, options.database))
+
+    keep_polling = True
+    while keep_polling:
+        tasks_request = requests.get(tasks_url)
+        active_tasks = tasks_request.json
+        if len(active_tasks) > 0:
+            print "Compaction progress:", active_tasks[0]["progress"]
+            time.sleep(2)
+        else:
+            print "No compaction running."
+            keep_polling = False
 
 if options.backup:
     d = datetime.datetime.now()
