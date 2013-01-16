@@ -8,7 +8,7 @@ from optparse import OptionParser
 
 
 def save_url(url, file_handle, size=(8 * 1024)):
-    req = requests.get(url, prefetch=False)
+    req = requests.get(url, stream=True)
 
     while True:
         chunk = req.raw.read(size)
@@ -22,17 +22,17 @@ def save_url(url, file_handle, size=(8 * 1024)):
 
 def put(url):
     req = requests.put(url)
-    return req.json
+    return req.json()
 
 
 def post(url, content=""):
     req = requests.post(url, data=content, headers={'content-type': 'application/json'})
-    return req.json["ok"]
+    return req.json()["ok"]
 
 
 def views(url):
     req = requests.get(views_URL)
-    designs = req.json
+    designs = req.json()
     return [x['id'].split("/")[1] for x in designs['rows']]
 
 parser = OptionParser()
@@ -77,7 +77,7 @@ if options.compact_database or options.all:
     keep_polling = True
     while keep_polling:
         tasks_request = requests.get(tasks_url)
-        active_tasks = tasks_request.json
+        active_tasks = tasks_request.json()
         if len(active_tasks) > 0:
             print "Compaction progress:", active_tasks[0]["progress"]
             time.sleep(2)
