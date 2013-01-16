@@ -3,6 +3,12 @@ couch-compaction
 
 A simple script to automatically perform the various CouchDB compaction tasks.
 
+Versioning Note
+===============
+
+As of Requests 1.0, some of the Requests APIs changed; resp.json went from at attribute to a method, etc.
+I've updated couch_compact.py to support 1.0+ of Requests, but this means that previous versions are not supported anymore.
+
 Usage Example
 =============
 
